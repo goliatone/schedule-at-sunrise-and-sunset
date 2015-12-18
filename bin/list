@@ -1,0 +1,13 @@
+#!/usr/bin/env /usr/local/bin/node
+
+require('crontab').load(function(err, crontab) {
+    if (err) {
+        return console.error(err);
+    }
+
+    var jobs = crontab.jobs(/*{comment:/comment 1/}*/);
+    jobs.map(function(job){
+        console.log(job.toString());
+    });
+
+});
