@@ -1,0 +1,38 @@
+#!/usr/bin/env /usr/local/bin/node
+
+var join = require('path').join,
+    resolve = require('path').resolve;
+
+var config = require(resolve('./conf/schedule'));
+
+
+module.exports = function(options){
+    require('crontab').load(function(err, crontab){
+
+        console.log('********************************');
+        console.log('command', config.command);
+        console.log('when', config.when);
+        console.log('comment', config.comment);
+        console.log('********************************');
+
+        var identifier = 'SCHEDULER: ' + config.id + ' ::';
+
+        var jobs = crontab.jobs({comment:new RegExp('^' + identifier)});
+
+        if(jobs.length){
+            console.log('Process already registered:');
+            jobs.map(function(job){
+                console.log(job.toString());
+            });
+            process.exit();
+        }
+
+        var job = crontab.create(config.command, config.when, identifier + ' ' + config.comment);
+
+        crontab.save(function(err, ctr){
+            if(err) console.error('ERROR', err);
+        });
+    });
+};
+
+module.exports();
