@@ -1,12 +1,14 @@
 #!/usr/bin/env /usr/local/bin/node
 
 var program = require('commander'),
+    moment = require('moment-timezone'),
     SunCalc = require('../lib/at-suncalc-date');
 
 var config = {
     lat: "40.740368",
     lon: "-73.995647",
-    date: 'tomorrow'
+    date: moment(new Date()).add(1, 'days'),
+    timezone: 'America/New_York'
 };
 
 var pkg = require('../package.json');
@@ -17,26 +19,29 @@ program
         'Register a job to be executed at sunset and sunrise.\n' +
         '  Under the hood it uses the "at" unix command.\n\n' +
         '  If you have not enabled the "atrun" daemon, do so:\n' +
-        '  sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.atrun.plist\n\n' +
-        '  To calculate sunset and sunrise we can use time specification in the form\n' +
-        '  HH:MM or HHMM. If that time is already past, the next day is assumed.\n\n' +
-        '  To specify a date you can use MMDDYY, MM/DD/YY, or YYYY-MM-DD\n' +
-        '  You can also use words like "now", "today", "tomorrow".\n\n'+
-        '  Relative times are also valid, "4pm +3 days", where the optional increment after\n' +
-        '  time specification can be "minutes", "hours", "days", "weeks", "months", "years".\n\n' +
-        '  For more info, run "man at".\n'
+        '  sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.atrun.plist\n\n'
+        // '  To calculate sunset and sunrise we can use time specification in the form\n' +
+        // '  HH:MM or HHMM. If that time is already past, the next day is assumed.\n\n' +
+        // '  To specify a date you can use MMDDYY, MM/DD/YY, or YYYY-MM-DD\n' +
+        // '  You can also use words like "now", "today", "tomorrow".\n\n'+
+        // '  Relative times are also valid, "4pm +3 days", where the optional increment after\n' +
+        // '  time specification can be "minutes", "hours", "days", "weeks", "months", "years".\n\n' +
+        // '  For more info, run "man at".\n'
     )
     .option('-ln, --lon [lon]', 'Longitude, used to calculate sun position. Defaults to "' + config.lon + '"', config.lon)
     .option('-lt, --lat [lat]', 'Latitude, used to calculate sun position. Defaults to "' + config.lat + '"', config.lat)
     .option('-d, --date [date]', 'Date to calculate sunrise and sunset. Defaults to "' + config.date + '"', config.date)
     .option('-D, --dry-run', 'Show commands generated but do not register jobs.')
+    .option('-t, --timezone [date]', 'Relative time zone. Defaults to "' + config.timezone + '"', config.timezone)
     .parse(process.argv);
 
 
 var opts = {};
 
-['lon', 'lat', 'date'].map(function(key){
+['lon', 'lat', 'date', 'dryRun', 'timezone'].map(function(key){
     if(program.hasOwnProperty(key)) opts[key] = program[key];
 });
 
-SunCalc.execute(config);
+config.date = moment(config.date).tz(config.timezone);
+
+SunCalc.execute(opts);
