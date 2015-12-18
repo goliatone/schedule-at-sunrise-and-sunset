@@ -1,14 +1,20 @@
 #!/usr/bin/env /usr/local/bin/node
+'use strict';
 
 var program = require('commander'),
     moment = require('moment-timezone'),
+    resolve = require('path').resolve,
     SunCalc = require('../lib/at-suncalc-date');
 
 var config = {
-    lat: "40.740368",
-    lon: "-73.995647",
+    lat: '40.740368',
+    lon: '-73.995647',
     date: moment(new Date()).add(1, 'days'),
-    timezone: 'America/New_York'
+    timezone: 'America/New_York',
+    jobPath: resolve(__dirname, '../scripts'),
+    sunrise: 'sunrise',
+    sunset: 'sunset',
+    dryRun: false
 };
 
 var pkg = require('../package.json');
@@ -19,9 +25,9 @@ program
         'Register a job to be executed at sunset and sunrise.\n' +
         '  Under the hood it uses the "at" unix command.\n\n' +
         '  If you have not enabled the "atrun" daemon, do so:\n' +
-        '  sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.atrun.plist\n\n'
-        // '  To calculate sunset and sunrise we can use time specification in the form\n' +
-        // '  HH:MM or HHMM. If that time is already past, the next day is assumed.\n\n' +
+        '  sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.atrun.plist\n\n' +
+        '  To calculate sunset and sunrise we can specify a date the form\n' +
+        '  "YYYY-MM-DD HH:MM" or any string that is understood by the moment js library.\n\n'
         // '  To specify a date you can use MMDDYY, MM/DD/YY, or YYYY-MM-DD\n' +
         // '  You can also use words like "now", "today", "tomorrow".\n\n'+
         // '  Relative times are also valid, "4pm +3 days", where the optional increment after\n' +
@@ -31,17 +37,24 @@ program
     .option('-ln, --lon [lon]', 'Longitude, used to calculate sun position. Defaults to "' + config.lon + '"', config.lon)
     .option('-lt, --lat [lat]', 'Latitude, used to calculate sun position. Defaults to "' + config.lat + '"', config.lat)
     .option('-d, --date [date]', 'Date to calculate sunrise and sunset. Defaults to "' + config.date + '"', config.date)
-    .option('-D, --dry-run', 'Show commands generated but do not register jobs.')
+    .option('-D, --dry-run', 'Show commands generated but do not register jobs.', false)
     .option('-t, --timezone [date]', 'Relative time zone. Defaults to "' + config.timezone + '"', config.timezone)
+    .option('-j, --job-path [jobPath]', 'Absolute path to directory that holds job scripts. Defaults to "' + config.jobPath + '"', config.jobPath)
+
+    .option('-s, --sunrise [sunrise]', 'Sunrise script name. Defaults to "' + config.sunrise + '"', config.sunrise)
+    .option('-S, --sunset [sunset]', 'Sunset script name. Defaults to "' + config.sunset + '"', config.sunset)
     .parse(process.argv);
 
 
 var opts = {};
 
-['lon', 'lat', 'date', 'dryRun', 'timezone'].map(function(key){
+Object.keys(config).map(function(key){
     if(program.hasOwnProperty(key)) opts[key] = program[key];
 });
 
-config.date = moment(config.date).tz(config.timezone);
+opts.date = moment(program.date).tz(config.timezone);
+// opts.date = opts.date.toString();
+
+// console.log(opts);
 
 SunCalc.execute(opts);
