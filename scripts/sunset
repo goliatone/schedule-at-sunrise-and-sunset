@@ -1,0 +1,13 @@
+#!/bin/bash
+
+
+DATE=$(date +"%m_%d_%Y")
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+FILENAME="$DIR/sunset_$DATE.txt"
+
+touch $FILENAME
+
+echo "Executed on $DATE. Go @!" > $FILENAME
+
+
