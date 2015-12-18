@@ -1,0 +1,32 @@
+{
+  "name": "schedule-at-sunrise-and-sunset",
+  "version": "0.0.1",
+  "description": "Schedule actions at sunset/sunrise",
+  "main": "bin/cli",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "crontab": "^1.1.2",
+    "grunt-cli": "^0.1.13",
+    "moment-timezone": "^0.4.1",
+    "suncalc": "^1.7.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/goliatone/schedule-at-sunrise-and-sunset.git"
+  },
+  "keywords": [
+    "at",
+    "schedule",
+    "cron"
+  ],
+  "author": "goliatone",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/goliatone/schedule-at-sunrise-and-sunset/issues"
+  },
+  "homepage": "https://github.com/goliatone/schedule-at-sunrise-and-sunset#readme"
+}
