@@ -1,67 +1,42 @@
 #!/usr/bin/env /usr/local/bin/node
 
-var SunCalc = require('suncalc');
-var moment = require('moment-timezone');
-var exec = require('child_process').exec;
-
-// require('moment-timezone');
+var program = require('commander'),
+    SunCalc = require('../lib/at-suncalc-date');
 
 var config = {
     lat: "40.740368",
     lon: "-73.995647",
-    date: new Date()
+    date: 'tomorrow'
 };
 
-var times = SunCalc.getTimes(new Date(config.date), config.lat, config.lon);
+var pkg = require('../package.json');
+
+program
+    .version(pkg.version)
+    .description(
+        'Register a job to be executed at sunset and sunrise.\n' +
+        '  Under the hood it uses the "at" unix command.\n\n' +
+        '  If you have not enabled the "atrun" daemon, do so:\n' +
+        '  sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.atrun.plist\n\n' +
+        '  To calculate sunset and sunrise we can use time specification in the form\n' +
+        '  HH:MM or HHMM. If that time is already past, the next day is assumed.\n\n' +
+        '  To specify a date you can use MMDDYY, MM/DD/YY, or YYYY-MM-DD\n' +
+        '  You can also use words like "now", "today", "tomorrow".\n\n'+
+        '  Relative times are also valid, "4pm +3 days", where the optional increment after\n' +
+        '  time specification can be "minutes", "hours", "days", "weeks", "months", "years".\n\n' +
+        '  For more info, run "man at".\n'
+    )
+    .option('-ln, --lon [lon]', 'Longitude, used to calculate sun position. Defaults to "' + config.lon + '"', config.lon)
+    .option('-lt, --lat [lat]', 'Latitude, used to calculate sun position. Defaults to "' + config.lat + '"', config.lat)
+    .option('-d, --date [date]', 'Date to calculate sunrise and sunset. Defaults to "' + config.date + '"', config.date)
+    .option('-D, --dry-run', 'Show commands generated but do not register jobs.')
+    .parse(process.argv);
 
 
-var sunrise = moment(times.sunrise),
-    sunriseDate = sunrise.tz('America/New_York').format('HH:mm MMM D');
+var opts = {};
 
-if(sunrise.isAfter(config.date)){
-    console.log('=> sunrise', sunriseDate);
-    at(sunriseDate, getpath('sunrise'));
-} else console.log('=> sunrise if before now. We are not registering the job.');
+['lon', 'lat', 'date'].map(function(key){
+    if(program.hasOwnProperty(key)) opts[key] = program[key];
+});
 
-var sunset = moment(times.dusk),
-    sunsetDate = sunset.tz('America/New_York').format('HH:mm MMM D');
-
-if(sunset.isAfter(config.date)){
-    console.log('=> sunset', sunsetDate);
-    at(sunsetDate, getpath('sunset'));
-} else console.log('=> sunset if before now. We are not registering the job.');
-
-
-function at(date, filepath){
-    //TODO: Make -m so that we mail errors. We have to setup mail thou.
-    var cmd = '/usr/bin/at -f ' + filepath + ' ' + date;
-    console.log(cmd);
-
-    exec(cmd, function(err, stdout, stderr){
-
-        var message = '-----------------------------------------\n';
-        message += '[' + (new Date()) + '] \n';
-        if(stdout) message += 'stdout: ' + stdout + '\n';
-        if(stderr) message += 'stderr: ' + stderr + '\n';
-
-        if(err) message += 'exec error: ' + err.message + '\n';
-
-        log(message);
-
-    });
-}
-
-
-function getpath(action){
-    var resolve = require('path').resolve,
-        join = require('path').join;
-
-    return join(resolve(__dirname, '../scripts'), action);
-}
-
-
-function log(message){
-    console.log(message);
-    var logpath = require('path').join(__dirname, 'at-suncalc-date.log');
-    require('fs').appendFileSync(logpath, message);
-}
+SunCalc.execute(config);
