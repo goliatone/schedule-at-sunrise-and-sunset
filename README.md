@@ -10,3 +10,5 @@ sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.atrun.plist
 
 Wed Dec 16 23:22:00 2015
 
+Execute scripts found at:
+`/usr/local/opt/at-sun`
