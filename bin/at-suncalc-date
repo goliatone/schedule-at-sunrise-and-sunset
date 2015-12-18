@@ -11,7 +11,8 @@ var config = {
     lon: '-73.995647',
     date: moment(new Date()).add(1, 'days'),
     timezone: 'America/New_York',
-    jobPath: resolve(__dirname, '../scripts'),
+    jobPath: '/usr/local/opt/at-sun',
+    // jobPath: resolve(__dirname, '../scripts'),
     sunrise: 'sunrise',
     sunset: 'sunset',
     dryRun: false
