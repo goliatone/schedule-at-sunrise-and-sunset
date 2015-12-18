@@ -2,7 +2,7 @@
   "name": "schedule-at-sunrise-and-sunset",
   "version": "0.0.1",
   "description": "Schedule actions at sunset/sunrise",
-  "main": "bin/cli",
+  "main": "bin/scheduler",
   "dependencies": {
     "commander": "^2.9.0",
     "crontab": "^1.1.2",
@@ -12,7 +12,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "npm test"
+    "test": "npm test",
+    "postinstall": "mkdir -p /usr/local/opt/at-sun && cp ./scripts/* /usr/local/opt/at-sun && chmod 775 /usr/local/opt/at-sun/sunrise /usr/local/opt/at-sun/sunset"
   },
   "repository": {
     "type": "git",
