@@ -1,38 +1,25 @@
 #!/usr/bin/env /usr/local/bin/node
 
-var join = require('path').join,
-    resolve = require('path').resolve;
+var program = require('commander'),
+    resolve = require('path').resolve,
+    config = require(resolve('./conf/schedule')),
+    Scheduler = require('../lib/scheduler');
 
-var config = require(resolve('./conf/schedule'));
+var pkg = require('../package.json');
+
+program
+  .version(pkg.version)
+  .option('-c, --command [command]', 'Crontab command. Defaults to "' + config.command + '"', config.command)
+  .option('-w, --when [pattern]', 'Crontab pattern. Defaults to "' + config.when + '"', config.when)
+  .option('-C, --comment [comment]', 'Comment. Defaults to "' + config.comment + '"', config.comment)
+  .option('-i, --id [id]', 'Command id. Defaults to "' + config.id + '"', config.id)
+  .parse(process.argv);
+
+var opts = {};
+
+['command', 'when', 'comment', 'id'].map(function(key){
+    if(program.hasOwnProperty(key)) opts[key] = program[key];
+});
 
 
-module.exports = function(options){
-    require('crontab').load(function(err, crontab){
-
-        console.log('********************************');
-        console.log('command', config.command);
-        console.log('when', config.when);
-        console.log('comment', config.comment);
-        console.log('********************************');
-
-        var identifier = 'SCHEDULER: ' + config.id + ' ::';
-
-        var jobs = crontab.jobs({comment:new RegExp('^' + identifier)});
-
-        if(jobs.length){
-            console.log('Process already registered:');
-            jobs.map(function(job){
-                console.log(job.toString());
-            });
-            process.exit();
-        }
-
-        var job = crontab.create(config.command, config.when, identifier + ' ' + config.comment);
-
-        crontab.save(function(err, ctr){
-            if(err) console.error('ERROR', err);
-        });
-    });
-};
-
-module.exports();
+Scheduler.execute(config);
