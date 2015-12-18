@@ -1,4 +1,5 @@
 #!/usr/bin/env /usr/local/bin/node
+'use strict';
 
 var program = require('commander'),
     resolve = require('path').resolve,
@@ -13,13 +14,13 @@ program
   .option('-w, --when [pattern]', 'Crontab pattern. Defaults to "' + config.when + '"', config.when)
   .option('-C, --comment [comment]', 'Comment. Defaults to "' + config.comment + '"', config.comment)
   .option('-i, --id [id]', 'Command id. Defaults to "' + config.id + '"', config.id)
+  .option('-D, --dry-run', 'Show commands generated but do not register jobs.', false)
   .parse(process.argv);
 
 var opts = {};
 
-['command', 'when', 'comment', 'id'].map(function(key){
+['command', 'when', 'comment', 'id', 'dryRun'].map(function(key){
     if(program.hasOwnProperty(key)) opts[key] = program[key];
 });
 
-
-Scheduler.execute(config);
+Scheduler.execute(opts);
