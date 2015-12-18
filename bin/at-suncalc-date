@@ -29,11 +29,6 @@ program
         '  sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.atrun.plist\n\n' +
         '  To calculate sunset and sunrise we can specify a date the form\n' +
         '  "YYYY-MM-DD HH:MM" or any string that is understood by the moment js library.\n\n'
-        // '  To specify a date you can use MMDDYY, MM/DD/YY, or YYYY-MM-DD\n' +
-        // '  You can also use words like "now", "today", "tomorrow".\n\n'+
-        // '  Relative times are also valid, "4pm +3 days", where the optional increment after\n' +
-        // '  time specification can be "minutes", "hours", "days", "weeks", "months", "years".\n\n' +
-        // '  For more info, run "man at".\n'
     )
     .option('-ln, --lon [lon]', 'Longitude, used to calculate sun position. Defaults to "' + config.lon + '"', config.lon)
     .option('-lt, --lat [lat]', 'Latitude, used to calculate sun position. Defaults to "' + config.lat + '"', config.lat)
