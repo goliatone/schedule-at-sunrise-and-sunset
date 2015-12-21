@@ -27,7 +27,8 @@ program
         '  If you have not enabled the "atrun" daemon, do so:\n' +
         '  sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.atrun.plist\n\n' +
         '  To calculate sunset and sunrise we can specify a date the form\n' +
-        '  "YYYY-MM-DD HH:MM" or any string that is understood by the moment js library.\n\n'
+        '  "YYYY-MM-DD HH:MM" or any string that is understood by the moment js library.\n\n' +
+        '  If we do not provide a date the default value will be tomorrow start of day.\n\n'
     )
     .option('-ln, --lon [lon]', 'Longitude, used to calculate sun position. Defaults to "' + config.lon + '"', config.lon)
     .option('-lt, --lat [lat]', 'Latitude, used to calculate sun position. Defaults to "' + config.lat + '"', config.lat)
@@ -35,7 +36,7 @@ program
     .option('-D, --dry-run', 'Show commands generated but do not register jobs.', false)
     .option('-t, --timezone [date]', 'Relative time zone. Defaults to "' + config.timezone + '"', config.timezone)
     .option('-j, --job-path [jobPath]', 'Absolute path to directory that holds job scripts. Defaults to "' + config.jobPath + '"', config.jobPath)
-    .option('-n, --now', 'Use now as a reference date as opposed to new +1 days.', false)
+    .option('-n, --now', 'Use now as a reference date as opposed to new +1 days SOF.', false)
     .option('-s, --sunrise [sunrise]', 'Sunrise script name. Defaults to "' + config.sunrise + '"', config.sunrise)
     .option('-S, --sunset [sunset]', 'Sunset script name. Defaults to "' + config.sunset + '"', config.sunset)
     .parse(process.argv);
