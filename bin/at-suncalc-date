@@ -9,10 +9,9 @@ var program = require('commander'),
 var config = {
     lat: '40.740368',
     lon: '-73.995647',
-    date: moment(new Date()).add(1, 'days'),
+    date: moment(new Date()).add(1, 'days').startOf('day'),
     timezone: 'America/New_York',
     jobPath: '/usr/local/opt/at-sun',
-    // jobPath: resolve(__dirname, '../scripts'),
     sunrise: 'sunrise',
     sunset: 'sunset',
     dryRun: false
@@ -36,7 +35,7 @@ program
     .option('-D, --dry-run', 'Show commands generated but do not register jobs.', false)
     .option('-t, --timezone [date]', 'Relative time zone. Defaults to "' + config.timezone + '"', config.timezone)
     .option('-j, --job-path [jobPath]', 'Absolute path to directory that holds job scripts. Defaults to "' + config.jobPath + '"', config.jobPath)
-
+    .option('-n, --now', 'Use now as a reference date as opposed to new +1 days.', false)
     .option('-s, --sunrise [sunrise]', 'Sunrise script name. Defaults to "' + config.sunrise + '"', config.sunrise)
     .option('-S, --sunset [sunset]', 'Sunset script name. Defaults to "' + config.sunset + '"', config.sunset)
     .parse(process.argv);
@@ -48,9 +47,8 @@ Object.keys(config).map(function(key){
     if(program.hasOwnProperty(key)) opts[key] = program[key];
 });
 
-opts.date = moment(program.date).tz(config.timezone);
-// opts.date = opts.date.toString();
-
-// console.log(opts);
+if(program.now) opts.date = moment(new Date());
+if(typeof opts.date === 'string') opts.date = new Date(opts.date);
+opts.date = moment(opts.date).tz(config.timezone);
 
 SunCalc.execute(opts);
