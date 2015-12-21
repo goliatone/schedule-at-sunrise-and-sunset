@@ -10,4 +10,4 @@ touch $FILENAME
 
 echo "Executed on $DATE. Go @!" > $FILENAME
 
-
+/usr/local/bin/pm2 stop hue-facade-test
