@@ -10,4 +10,5 @@ touch $FILENAME
 
 echo "Executed on $DATE. Go @!" > $FILENAME
 
+/usr/local/bin/pm2 start /opt/hue-facade/bin/worker-test --name hue-facade-test
 
