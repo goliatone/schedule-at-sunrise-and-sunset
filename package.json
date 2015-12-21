@@ -6,7 +6,7 @@
   "dependencies": {
     "commander": "^2.9.0",
     "crontab": "^1.1.2",
-    "grunt-cli": "^0.1.13",
+    "debug": "^2.2.0",
     "moment-timezone": "^0.4.1",
     "suncalc": "^1.7.0"
   },
