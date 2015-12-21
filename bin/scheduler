@@ -8,19 +8,29 @@ var program = require('commander'),
 
 var pkg = require('../package.json');
 
-program
-  .version(pkg.version)
-  .option('-c, --command [command]', 'Crontab command. Defaults to "' + config.command + '"', config.command)
-  .option('-w, --when [pattern]', 'Crontab pattern. Defaults to "' + config.when + '"', config.when)
-  .option('-C, --comment [comment]', 'Comment. Defaults to "' + config.comment + '"', config.comment)
-  .option('-i, --id [id]', 'Command id. Defaults to "' + config.id + '"', config.id)
-  .option('-D, --dry-run', 'Show commands generated but do not register jobs.', false)
-  .parse(process.argv);
+var opts = '';
 
-var opts = {};
+if(process.argv.indexOf('--') !== -1){
+    opts = process.argv.join(' ').split(/\s--\s/);
+    process.argv = opts[0].split(' ');
+    opts = opts[1];
+}
+
+program
+    .version(pkg.version)
+    .option('-c, --command [command]', 'Crontab command. Defaults to "' + config.command + '"', config.command)
+    .option('-w, --when [pattern]', 'Crontab pattern. Defaults to "' + config.when + '"', config.when)
+    .option('-C, --comment [comment]', 'Comment. Defaults to "' + config.comment + '"', config.comment)
+    .option('-i, --id [id]', 'Command id. Defaults to "' + config.id + '"', config.id)
+    .option('-D, --dry-run', 'Show commands generated but do not register jobs.', false)
+    .parse(process.argv);
+
+var options = {};
 
 ['command', 'when', 'comment', 'id', 'dryRun'].map(function(key){
-    if(program.hasOwnProperty(key)) opts[key] = program[key];
+    if(program.hasOwnProperty(key)) options[key] = program[key];
 });
 
-Scheduler.execute(opts);
+options.opts = opts;
+
+Scheduler.execute(options);
