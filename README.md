@@ -9,6 +9,23 @@ This library will schedule a `cron` job to run every day. That job then calculat
 $ npm i -g schedule-at-sunrise-and-sunset
 ```
 
+### Default script path 
+
+On `postintall` this package will create the directory `/usr/local/opt/at-sun` where the current sample scripts provided with the repo will be installed.
+
+You can replace those scripts with your own, or when you register an `at-suncalc` job, provide the arguments to the scheduler.
+
+```
+$ at-scheduler --now -- --sunrise start-hue-facade --sunset stop-hue-facade
+```
+
+The previous command will use `start-hue-facade` as the sunrise script, and `stop-hue-facade` as the sunset script. If you want to place your scripts in a different location, provide the `--job-path` option.
+
+```
+$ at-scheduler --now -- --job-path /opt/at-scripts
+```
+
+Make sure that your user has permissions to execute scripts in that directory.
 
 ### Documentation
 
