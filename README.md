@@ -110,6 +110,11 @@ You might get `mail` stating that:
 
 
 
+#### LICENSE 
+
+MIT
+
+
 
 <!--
 Install script:
